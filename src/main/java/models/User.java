@@ -1,26 +1,24 @@
 package models;
-
-import jakarta.persistence.*;
 import java.util.List;
 
-@Entity
-@Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "name")
     private String name;
 
     private int age;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Auto> autos;
 
     public User(){}
 
     public User(String name, int age){
+        this.name = name;
+        this.age = age;
+    }
+
+    public User(int id, String name, int age){
+        this.id = id;
         this.name = name;
         this.age = age;
     }

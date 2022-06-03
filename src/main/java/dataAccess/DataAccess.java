@@ -1,9 +1,11 @@
 package dataAccess;
 
+import dataAccess.models.AutoRepository;
+import dataAccess.models.UserRepository;
 import models.User;
 
-import javax.management.monitor.StringMonitor;
 import java.sql.*;
+import java.util.*;
 
 import static java.lang.System.out;
 
@@ -14,9 +16,10 @@ public class DataAccess {
     public static Connection conn;
     public static Statement statmt;
     public static ResultSet resSet;
+    public static UserRepository userDB;
+    public static AutoRepository autoDB;
 
     public static void DataAccess() throws ClassNotFoundException, SQLException {
-
         Class.forName("org.postgresql.Driver");
         conn = DriverManager.getConnection(DB_URL, USER, PASS);
         statmt = conn.createStatement();
@@ -32,20 +35,7 @@ public class DataAccess {
         out.println("Таблицы созданы или уже существуют.");
     }
 
-    public User getUser(int id) throws SQLException {
-        resSet = statmt.executeQuery("SELECT * FROM users WHERE id = " + id);
 
-        while (resSet.next()) {
-            int idUs = resSet.getInt("id");
-            if (idUs == id) {
-                String name = resSet.getString("name");
-                int age = resSet.getInt("age");
-                out.println(name + "\t" + age);
-                return new User(name, age);
-            }
-        }
-        return new User();
-    }
 
     public void AddUser(User user) throws SQLException {
         statmt.executeUpdate("INSERT INTO users (name ,age) VALUES (\'" + user.getName() + "\', " + user.getAge() + ")");
@@ -55,7 +45,7 @@ public class DataAccess {
         statmt.executeUpdate("DELETE FROM users WHERE name=\'" + user.getName() + "\' AND age = " + user.getAge());
     }
 
-    public static void WriteDB() {
+    public static void WriteDB() throws SQLException {
         try {
             statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Petya', 16);");
             statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Vasya', 14);");
@@ -84,5 +74,18 @@ public class DataAccess {
         }
 
         out.println("Таблица выведена");
+    }
+
+    public User[] GetUsers() throws SQLException {
+        List<User> users = new ArrayList<>();
+        resSet = statmt.executeQuery("SELECT * FROM \"users\"");
+
+        while (resSet.next()) {
+            int id = resSet.getInt(1);
+            String name = resSet.getString(2);
+            int age = resSet.getInt(3);
+            users.add(new User(id, name, age));
+        }
+        return users.toArray(new User[0]);
     }
 }

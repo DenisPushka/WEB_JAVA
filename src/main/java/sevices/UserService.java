@@ -5,35 +5,28 @@ import dao.UserDao;
 import dataAccess.DataAccess;
 import models.*;
 
-import java.util.List;
+import java.sql.SQLException;
 
 public class UserService {
     private IUserDao usersDao = new UserDao(new DataAccess());
 
-    public UserService() {    }
-
-    public User findUser(int id) {
-        return usersDao.findById(id);
+    public UserService() throws SQLException, ClassNotFoundException {
+        DataAccess.DataAccess();
     }
 
-    public void saveUser(User user) {
-        usersDao.save(user);
+    public User GetUser(int id) throws SQLException {
+        return usersDao.getUser(id);
     }
 
-    public void deleteUser(User user) {
+    public void DeleteUser(User user) throws SQLException {
         usersDao.delete(user);
     }
 
-    public void updateUser(User user) {
-        usersDao.update(user);
+    public void AddUser(User user) throws SQLException {
+        usersDao.addUser(user);
     }
 
-    public List<User> findAllUsers() {
-        return usersDao.findAll();
+    public User[] GetUsers() throws SQLException {
+        return usersDao.users();
     }
-
-    public Auto findAutoById(int id) {
-        return usersDao.findAutoById(id);
-    }
-
 }

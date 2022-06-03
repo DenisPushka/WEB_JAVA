@@ -1,13 +1,14 @@
-import dataAccess.DataAccess;
 import models.User;
+import sevices.UserService;
 
 import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        DataAccess.DataAccess();
-        DataAccess db = new DataAccess();
-        db.getUser(2);
-        db.DeleteUser(new User("Denis", 20));
+        UserService us = new UserService();
+        User[] a = us.GetUsers();
+        for (User user: a) {
+            System.out.println(user);
+        }
     }
 }

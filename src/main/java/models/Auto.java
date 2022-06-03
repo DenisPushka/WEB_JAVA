@@ -1,20 +1,9 @@
 package models;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "autos")
 public class Auto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(name = "model")
     private String model;
-
     private String color;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private User user;
 
     public Auto(){}
@@ -22,6 +11,12 @@ public class Auto {
     public Auto(String model, String color) {
         this.model = model;
         this.color = color;
+    }
+
+    public Auto(String model, String color, User user) {
+        this.model = model;
+        this.color = color;
+        this.user = user;
     }
 
     public int getId() {
@@ -55,14 +50,10 @@ public class Auto {
     @Override
     public String toString() {
         return "Auto{" +
-                "model='" + model + '\'' +
+                "id=" + id +
+                ", model='" + model + '\'' +
                 ", color='" + color + '\'' +
+                ", user=" + user +
                 '}';
     }
 }
-   /* CREATE TABLE auto
-        (
-                id INTEGER PRIMARY KEY,
-                model TEXT,
-                color TEXT
-        );*/
