@@ -17,6 +17,8 @@ public class UserDao implements IUserDao {
         return db.userDB.getUser(id);
     }
 
+
+
     @Override
     public void addUser(User user) throws SQLException {
         db.AddUser(user);
