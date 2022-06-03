@@ -1,11 +1,14 @@
 package dataAccess;
 
+import models.User;
+
+import javax.management.monitor.StringMonitor;
 import java.sql.*;
 
 import static java.lang.System.out;
 
 public class DataAccess {
-    static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/OrderAccountSystem";
+    static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/TEST_JAVA";
     static final String USER = "postgres";
     static final String PASS = "ogr84Bqk3";
     public static Connection conn;
@@ -23,16 +26,46 @@ public class DataAccess {
 
     public static void CreateDB() throws SQLException {
         statmt = conn.createStatement();
-        // statmt.execute("CREATE TABLE if not exists \"users\" ('id' INTEGER PRIMARY KEY AUTOINCREMENT, 'name' text, 'age' INT);");
+        statmt.execute("CREATE TABLE if not exists \"users\" (Id SERIAL PRIMARY KEY, name text, age INT);");
+        statmt.execute("CREATE TABLE if not exists \"autos\" (Id SERIAL PRIMARY KEY, model text, color TEXT, UserId INTEGER REFERENCES users(Id));");
 
-        out.println("Таблица создана или уже существует.");
+        out.println("Таблицы созданы или уже существуют.");
     }
 
-    public static void WriteDB() throws SQLException
-    {
-        statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Petya', 16);");
-        statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Vasya', 14);");
-        statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Masha', 18);");
+    public User getUser(int id) throws SQLException {
+        resSet = statmt.executeQuery("SELECT * FROM users WHERE id = " + id);
+
+        while (resSet.next()) {
+            int idUs = resSet.getInt("id");
+            if (idUs == id) {
+                String name = resSet.getString("name");
+                int age = resSet.getInt("age");
+                out.println(name + "\t" + age);
+                return new User(name, age);
+            }
+        }
+        return new User();
+    }
+
+    public void AddUser(User user) throws SQLException {
+        statmt.executeUpdate("INSERT INTO users (name ,age) VALUES (\'" + user.getName() + "\', " + user.getAge() + ")");
+    }
+
+    public void DeleteUser(User user) throws SQLException {
+        statmt.executeUpdate("DELETE FROM users WHERE name=\'" + user.getName() + "\' AND age = " + user.getAge());
+    }
+
+    public static void WriteDB() {
+        try {
+            statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Petya', 16);");
+            statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Vasya', 14);");
+            statmt.execute("INSERT INTO \"users\" (\"name\", \"age\") VALUES ('Masha', 18);");
+            statmt.execute("INSERT INTO \"autos\" (\"model\", \"userid\") VALUES ('LAda', 2);");
+            statmt.execute("INSERT INTO \"autos\" (\"model\", \"userid\") VALUES ('Ferrari', 1);");
+            statmt.execute("INSERT INTO \"autos\" (\"model\", \"userid\") VALUES ('BMW', 3);");
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
 
         System.out.println("Таблица заполнена");
     }
@@ -51,13 +84,5 @@ public class DataAccess {
         }
 
         out.println("Таблица выведена");
-    }
-
-    public static void CloseDB() throws SQLException {
-        conn.close();
-        statmt.close();
-        resSet.close();
-
-        out.println("Соединения закрыты");
     }
 }

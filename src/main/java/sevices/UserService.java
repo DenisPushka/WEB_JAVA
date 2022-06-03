@@ -2,12 +2,13 @@ package sevices;
 
 import dao.IUserDao;
 import dao.UserDao;
+import dataAccess.DataAccess;
 import models.*;
 
 import java.util.List;
 
 public class UserService {
-    private IUserDao usersDao = new UserDao();
+    private IUserDao usersDao = new UserDao(new DataAccess());
 
     public UserService() {    }
 
